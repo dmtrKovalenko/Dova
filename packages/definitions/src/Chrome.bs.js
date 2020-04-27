@@ -92,7 +92,7 @@ function pointerTypeFromJs(param) {
   return Js_mapperRt.revSearch(2, jsMapperConstantArray$2, param);
 }
 
-function dispatchMouseEvent(debuggee, type_, pointer, x, y, clickCount, button, param) {
+function dispatchMouseEvent(debuggee, type_, pointer, x, y, clickCount, button, onDone, param) {
   var tmp = {
     type: Js_mapperRt.binarySearch(4, type_, jsMapperConstantArray)
   };
@@ -113,10 +113,9 @@ function dispatchMouseEvent(debuggee, type_, pointer, x, y, clickCount, button, 
   if (clickCount !== undefined) {
     tmp.clickCount = Caml_option.valFromOption(clickCount);
   }
-  chrome.debugger.sendCommand(debuggee, "Input.dispatchMouseEvent", tmp, (function (r) {
-          console.log(r);
-          return /* () */0;
-        }));
+  chrome.debugger.sendCommand(debuggee, "Input.dispatchMouseEvent", tmp, onDone !== undefined ? onDone : (function (prim) {
+            return /* () */0;
+          }));
   return /* () */0;
 }
 

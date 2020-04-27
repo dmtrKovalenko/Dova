@@ -13,25 +13,31 @@ module Request = {
 };
 
 module Response = {
-  type elementCoords = {
-    x: float,
-    y: float,
-  };
-
   type cmd =
     | Success
     | Fail(DovaApi.dovaErrors)
-    | ElementReadyForInteraction(elementCoords)
+    | ElementReadyForInteraction(DovaApi.elementCoords)
     | Get(int);
 
   let sendResponse = (port, command: cmd) => {
     port->Chrome.Port.postMessage(ChromeHelper.serializeVariant(command));
   };
 
-  let on = (port: Chrome.Port.t, handler: cmd => unit) => {
-    port.onMessage
-    ->Chrome.Port.addListener(response =>
-        response |> ChromeHelper.deserializeVariant |> handler
+  type handlerResult =
+    | Handled
+    | Continue;
+
+  let on = (port: Chrome.Port.t, handler: cmd => handlerResult) => {
+    let rec callback = response =>
+      response
+      |> ChromeHelper.deserializeVariant
+      |> handler
+      |> (
+        fun
+        | Handled => port.onMessage->Chrome.Port.removeListener(callback)
+        | Continue => ignore()
       );
+
+    port.onMessage->Chrome.Port.addListener(callback);
   };
 };

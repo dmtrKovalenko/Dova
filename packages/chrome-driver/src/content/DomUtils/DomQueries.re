@@ -6,7 +6,6 @@ let verifyElementsCount = nodeList => nodeList |> NodeList.length > 0;
 
 let findElement = (selector: By.selector) => {
   let elements = document |> Document.querySelectorAll(selector.query);
-  Js.log(elements)
 
   switch (elements->NodeList.length) {
   | 1 =>
@@ -28,5 +27,18 @@ let getElementCoords = node => {
 
   node
   |> Element.getBoundingClientRect
-  |> (res => {x: res->DomRect.x, y: res->DomRect.y});
+  |> (
+    res => {
+      x:
+        res->DomRect.x
+        +. window->Window.pageXOffset
+        +. res->DomRect.width
+        /. 2.,
+      y:
+        res->DomRect.y
+        +. window->Window.pageYOffset
+        +. res->DomRect.height
+        /. 2.,
+    }
+  );
 };

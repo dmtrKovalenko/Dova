@@ -1,14 +1,14 @@
-open DovaEventBus.Request;
+open DovaEventBus;
 open DovaDefinitions.PromiseMonad;
 
 let contains = (port, selector) =>
   defer(resolve =>
     port
-    ->DovaEventBus.Request.send(Contains(selector))
-    ->DovaEventBus.Response.on(
+    ->Request.send(Contains(selector))
+    ->Response.on(
         fun
-        | Success => resolve(. true)
-        | Fail(_err) => resolve(. false)
-        | _ => (),
+        | Success => resolve(. true) |> (_ => Response.Handled)
+        | Fail(_err) => resolve(. false) |> (_ => Response.Handled)
+        | _ => Response.Continue,
       )
   );

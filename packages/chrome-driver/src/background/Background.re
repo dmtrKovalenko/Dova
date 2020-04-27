@@ -1,12 +1,23 @@
 open DovaApi;
 open DovaDefinitions.PromiseMonad;
 
-let executeTest = () => {
-  let%Async page = Visit.visit("https://google.com");
-  let%Async _ = page.contains(By.id("span"));
-  let%Async kek = page.click(By.selector({j|[data-pid="23"]|j}));
+let wait = milliseconds =>
+  defer(resolve =>
+    Js.Global.setTimeout(_ => resolve(. ignore()), milliseconds)
+  );
 
-  Js.log(kek)
+let executeTest = () => {
+  let%Async page =
+    Visit.visit("https://dev.material-ui-pickers.dev/regression");
+  let%Async _contains = page.contains(By.id("basic-datepicker"));
+  let%Async _ = page.click(By.id("basic-datepicker"));
+
+  let%Async _ = wait(100);
+
+  let%Async _ = page.click(By.ariaLabel("next month"));
+  let%Async _ = page.click(By.ariaLabel("next month"));
+  let%Async _ = wait(350);
+  let%Async _ = page.click(By.ariaLabel("Mar 19, 2019"));
 
   defer(ignore);
 };

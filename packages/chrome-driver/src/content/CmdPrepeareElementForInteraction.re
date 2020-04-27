@@ -8,7 +8,6 @@ type coords = {
 
 let execute = (selector: By.selector) => {
   DomQueries.findElement(selector)
-  |> Helpers.logAndReturn
   |> (
     fun
     | Ok(node) =>

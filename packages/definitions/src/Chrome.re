@@ -4,6 +4,9 @@ module Port = {
 
   [@bs.send]
   external addListener: (onMessage, 'a => unit) => unit = "addListener";
+  
+  [@bs.send]
+  external removeListener: (onMessage, 'a => unit) => unit = "removeListener";
 
   [@bs.send] external postMessage: (t, 'a) => unit = "postMessage";
 };
@@ -124,6 +127,7 @@ module Debugger = {
           ~y=?,
           ~clickCount=?,
           ~button=?,
+          ~onDone=?,
           (),
         ) =>
       sendCommand(
@@ -138,8 +142,10 @@ module Debugger = {
           ~clickCount?,
           (),
         ),
-        r =>
-        Js.log(r)
+        switch (onDone) {
+        | Some(cb) => cb
+        | None => ignore
+        },
       );
   };
 };

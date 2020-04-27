@@ -2,8 +2,9 @@ open DovaEventBus;
 open DovaDefinitions;
 open DovaDefinitions.PromiseMonad;
 
-let performClick = ({x, y}: Response.elementCoords, debuggee, resolve) => {
-  Js.log2(x, y);
+let performClick = ({x, y}: DovaApi.elementCoords, debuggee, resolve) => {
+  Js.log2("Clicking", DovaApi.{x, y});
+
   Chrome.Debugger.Input.dispatchMouseEvent(
     debuggee,
     ~type_=`mousePressed,
@@ -11,6 +12,7 @@ let performClick = ({x, y}: Response.elementCoords, debuggee, resolve) => {
     ~x,
     ~y,
     ~clickCount=1,
+    ~onDone=Js.log,
     (),
   );
 
@@ -21,10 +23,11 @@ let performClick = ({x, y}: Response.elementCoords, debuggee, resolve) => {
     ~x,
     ~y,
     ~clickCount=1,
+    ~onDone=resolve,
     (),
   );
 
-  resolve();
+  ();
 };
 
 let click = (port, debuggee, selector) =>
@@ -35,6 +38,10 @@ let click = (port, debuggee, selector) =>
         fun
         | ElementReadyForInteraction(coords) =>
           performClick(coords, debuggee, _ => resolve(. ignore()))
-        | _ => (),
+          |> (_ => Response.Handled)
+        | _ => Response.Continue,
       )
   );
+
+let clickByCoords = (_port, debuggee, coords) =>
+  defer(resolve => performClick(coords, debuggee, _ => resolve(. ignore())));
