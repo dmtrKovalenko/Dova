@@ -1,0 +1,15 @@
+{
+  "manifest_version": 2,
+  "name": "Dova test runner",
+  "version": "0.2",
+  "permissions": ["background",  "activeTab", "debugger", "*://*/*"],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}

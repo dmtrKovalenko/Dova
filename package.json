@@ -1,0 +1,14 @@
+{
+  "name": "dova",
+  "version": "0.0.1",
+  "description": "Honest and realiable test runner for your browser",
+  "main": "index.js",
+  "author": "Dmitriy Kovalenko",
+  "license": "MIT",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "dependencies": {
+    "add": "^2.0.6",
+    "bs-platform": "^7.2.2"
+  }
+}

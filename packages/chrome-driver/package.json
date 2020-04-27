@@ -1,0 +1,22 @@
+{
+  "name": "driver",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "rollup -c",
+    "start": "rollup -c -w",
+    "clean": "bsb -clean-world"
+  },
+  "keywords": [
+    "BuckleScript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@dova/definitions": "*",
+    "bs-let": "^0.1.16",
+    "bs-webapi": "^0.15.9",
+    "rollup": "^2.2.0",
+    "rollup-plugin-bucklescript": "^0.7.0",
+    "rollup-plugin-node-resolve": "^5.2.0"
+  }
+}
