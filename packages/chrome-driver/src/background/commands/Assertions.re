@@ -7,8 +7,8 @@ let contains = (port, selector) =>
     ->Request.send(Contains(selector))
     ->Response.on(
         fun
-        | Success => resolve(. true) |> (_ => Response.Handled)
-        | Fail(_err) => resolve(. false) |> (_ => Response.Handled)
+        | Success => resolve(true) |> (_ => Response.Handled)
+        | Fail(_err) => resolve(false) |> (_ => Response.Handled)
         | _ => Response.Continue,
       )
   );

@@ -5,7 +5,9 @@ var Curry = require("bs-platform/lib/js/curry.js");
 
 function defer(f) {
   return new Promise((function (resolve, param) {
-                Curry._1(f, resolve);
+                Curry._1(f, (function (a) {
+                        return resolve(a);
+                      }));
                 return /* () */0;
               }));
 }

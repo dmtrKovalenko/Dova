@@ -23,13 +23,10 @@ let visit = url =>
               tab.id,
               tab => {
                 let debugee = Chrome.Debugger.{tabId: tab.id};
-                Chrome.Debugger.attach(
-                  debugee,
-                  "1.2"
-                );
+                Chrome.Debugger.attach(debugee, "1.2");
 
                 tab.id->Chrome.Tabs.connect({name: "Dova tests"})
-                |> (port => resolve(. Dova.make(port, debugee)) |> ignore);
+                |> (port => resolve(Dova.make(port, debugee)) |> ignore);
               },
             )
           });

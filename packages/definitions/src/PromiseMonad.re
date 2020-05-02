@@ -1,5 +1,5 @@
 let defer = (f): Js.Promise.t('a) =>
-  Js.Promise.make((~resolve, ~reject as _) => ignore(f(resolve)));
+  Js.Promise.make((~resolve, ~reject as _) => ignore(f(a => resolve(. a))));
 
 let return = (a: 'a): Js.Promise.t('a) => Js.Promise.resolve(a);
 

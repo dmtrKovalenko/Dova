@@ -37,11 +37,10 @@ let click = (port, debuggee, selector) =>
     ->Response.on(
         fun
         | ElementReadyForInteraction(coords) =>
-          performClick(coords, debuggee, _ => resolve(. ignore()))
-          |> (_ => Response.Handled)
+          performClick(coords, debuggee, resolve) |> (_ => Response.Handled)
         | _ => Response.Continue,
       )
   );
 
 let clickByCoords = (_port, debuggee, coords) =>
-  defer(resolve => performClick(coords, debuggee, _ => resolve(. ignore())));
+  defer(resolve => performClick(coords, debuggee, resolve));
