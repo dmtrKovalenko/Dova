@@ -1,6 +1,11 @@
 let defer = (f): Js.Promise.t('a) =>
   Js.Promise.make((~resolve, ~reject as _) => ignore(f(a => resolve(. a))));
 
+let deferR = (f): Js.Promise.t('a) =>
+  Js.Promise.make((~resolve, ~reject) =>
+    ignore(f(a => resolve(. a), b => reject(. b)))
+  );
+
 let return = (a: 'a): Js.Promise.t('a) => Js.Promise.resolve(a);
 
 let error = (a: exn): Js.Promise.t('a) => Js.Promise.reject(a);

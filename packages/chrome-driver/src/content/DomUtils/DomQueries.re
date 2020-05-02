@@ -36,13 +36,7 @@ let findElementsRetryable = selector => {
     );
 
   defer(resolve =>
-    retry(
-      runFindElements,
-      ~onResolve=res => resolve(. res),
-      ~delay=30,
-      ~timeout=5000,
-      (),
-    )
+    retry(runFindElements, ~onResolve=resolve, ~delay=30, ~timeout=5000, ())
   );
 };
 

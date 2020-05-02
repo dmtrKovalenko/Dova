@@ -92,6 +92,16 @@ function pointerTypeFromJs(param) {
   return Js_mapperRt.revSearch(2, jsMapperConstantArray$2, param);
 }
 
+function makeOnResolveCb(param) {
+  if (param !== undefined) {
+    return param;
+  } else {
+    return (function (prim) {
+        return /* () */0;
+      });
+  }
+}
+
 function dispatchMouseEvent(debuggee, type_, pointer, x, y, clickCount, button, onDone, param) {
   var tmp = {
     type: Js_mapperRt.binarySearch(4, type_, jsMapperConstantArray)
@@ -113,9 +123,55 @@ function dispatchMouseEvent(debuggee, type_, pointer, x, y, clickCount, button, 
   if (clickCount !== undefined) {
     tmp.clickCount = Caml_option.valFromOption(clickCount);
   }
-  chrome.debugger.sendCommand(debuggee, "Input.dispatchMouseEvent", tmp, onDone !== undefined ? onDone : (function (prim) {
-            return /* () */0;
-          }));
+  chrome.debugger.sendCommand(debuggee, "Input.dispatchMouseEvent", tmp, makeOnResolveCb(onDone));
+  return /* () */0;
+}
+
+var jsMapperConstantArray$3 = [
+  /* tuple */[
+    -1044422954,
+    "char"
+  ],
+  /* tuple */[
+    -553731622,
+    "keyUp"
+  ],
+  /* tuple */[
+    246270105,
+    "rawKeyDown"
+  ],
+  /* tuple */[
+    474442145,
+    "keyDown"
+  ]
+];
+
+function keyEventTypeToJs(param) {
+  return Js_mapperRt.binarySearch(4, param, jsMapperConstantArray$3);
+}
+
+function keyEventTypeFromJs(param) {
+  return Js_mapperRt.revSearch(4, jsMapperConstantArray$3, param);
+}
+
+function dispatchKeyEvent(debugee, type_, keycodeDefintion, modifiers, text, unmodifiedText, onDone, param) {
+  var tmp = {
+    type: Js_mapperRt.binarySearch(4, type_, jsMapperConstantArray$3),
+    key: keycodeDefintion.key,
+    code: keycodeDefintion.code,
+    keyCode: keycodeDefintion.keyCode,
+    location: keycodeDefintion.location
+  };
+  if (modifiers !== undefined) {
+    tmp.modifiers = Caml_option.valFromOption(modifiers);
+  }
+  if (text !== undefined) {
+    tmp.text = Caml_option.valFromOption(text);
+  }
+  if (unmodifiedText !== undefined) {
+    tmp.unmodifiedText = Caml_option.valFromOption(unmodifiedText);
+  }
+  chrome.debugger.sendCommand(debugee, "Input.dispatchKeyEvent", tmp, makeOnResolveCb(onDone));
   return /* () */0;
 }
 
@@ -126,7 +182,11 @@ var Input = {
   mouseButtonFromJs: mouseButtonFromJs,
   pointerTypeToJs: pointerTypeToJs,
   pointerTypeFromJs: pointerTypeFromJs,
-  dispatchMouseEvent: dispatchMouseEvent
+  makeOnResolveCb: makeOnResolveCb,
+  dispatchMouseEvent: dispatchMouseEvent,
+  keyEventTypeToJs: keyEventTypeToJs,
+  keyEventTypeFromJs: keyEventTypeFromJs,
+  dispatchKeyEvent: dispatchKeyEvent
 };
 
 var Debugger = {

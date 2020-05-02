@@ -12,7 +12,6 @@ let performClick = ({x, y}: DovaApi.elementCoords, debuggee, resolve) => {
     ~x,
     ~y,
     ~clickCount=1,
-    ~onDone=Js.log,
     (),
   );
 

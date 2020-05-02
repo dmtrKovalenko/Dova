@@ -12,6 +12,17 @@ function defer(f) {
               }));
 }
 
+function deferR(f) {
+  return new Promise((function (resolve, reject) {
+                Curry._2(f, (function (a) {
+                        return resolve(a);
+                      }), (function (b) {
+                        return reject(b);
+                      }));
+                return /* () */0;
+              }));
+}
+
 function $$return(a) {
   return Promise.resolve(a);
 }
@@ -41,6 +52,7 @@ function $great$great$slash(m, f) {
 }
 
 exports.defer = defer;
+exports.deferR = deferR;
 exports.$$return = $$return;
 exports.error = error;
 exports.$great$great$neg = $great$great$neg;

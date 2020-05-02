@@ -12,9 +12,11 @@ let executeTest = () => {
 
   let%Async _ = page.click(By.ariaLabel("next month"));
   let%Async _ = page.click(By.ariaLabel("next month"));
-  
+
   let%Async _ = wait(350);
   let%Async _ = page.click(By.ariaLabel("Mar 19, 2019"));
+
+  let%Async _ = page.press("Escape");
 
   defer(ignore);
 };

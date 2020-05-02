@@ -4,7 +4,7 @@ module Port = {
 
   [@bs.send]
   external addListener: (onMessage, 'a => unit) => unit = "addListener";
-  
+
   [@bs.send]
   external removeListener: (onMessage, 'a => unit) => unit = "removeListener";
 
@@ -118,6 +118,11 @@ module Debugger = {
       clickCount: int,
     };
 
+    let makeOnResolveCb =
+      fun
+      | Some(cb) => cb
+      | None => ignore;
+
     let dispatchMouseEvent =
         (
           debuggee,
@@ -142,10 +147,58 @@ module Debugger = {
           ~clickCount?,
           (),
         ),
-        switch (onDone) {
-        | Some(cb) => cb
-        | None => ignore
-        },
+        makeOnResolveCb(onDone),
+      );
+
+    [@bs.deriving jsConverter]
+    type keyEventType = [ | `keyDown | `keyUp | `rawKeyDown | `char];
+
+    [@bs.deriving abstract]
+    type keyEventOptions = {
+      [@bs.as "type"]
+      type_: string,
+      [@bs.optional]
+      modifiers: int,
+      [@bs.optional]
+      text: string,
+      [@bs.optional]
+      unmodifiedText: string,
+      [@bs.optional]
+      key: string,
+      [@bs.optional]
+      code: string,
+      [@bs.optional]
+      keyCode: int,
+      [@bs.optional]
+      location: int,
+    };
+
+    let dispatchKeyEvent =
+        (
+          debugee,
+          ~type_,
+          ~keycodeDefintion: ChromeKeyboardDefintion.chromeKeyboardDefintion,
+          ~modifiers=?,
+          ~text=?,
+          ~unmodifiedText=?,
+          ~onDone=?,
+          (),
+        ) =>
+      sendCommand(
+        debugee,
+        "Input.dispatchKeyEvent",
+        keyEventOptions(
+          ~type_=keyEventTypeToJs(type_),
+          ~modifiers?,
+          ~text?,
+          ~unmodifiedText?,
+          ~key=keycodeDefintion.key,
+          ~code=keycodeDefintion.code,
+          ~keyCode=keycodeDefintion.keyCode,
+          ~location=keycodeDefintion.location,
+          (),
+        ),
+        makeOnResolveCb(onDone),
       );
   };
 };
