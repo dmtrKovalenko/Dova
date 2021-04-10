@@ -19,7 +19,7 @@ module Response = {
     | ElementReadyForInteraction(DovaApi.elementCoords)
     | Get(int)
 
-  let responseOfResult = (map, res) =>
+  let ofResult = (map, res) =>
     switch res {
     | Ok(value) => map(value)
     | Error(error) => Fail(DovaApi.UnhandledError(error))

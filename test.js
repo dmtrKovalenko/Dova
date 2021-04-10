@@ -6,6 +6,8 @@ async function run() {
 
   await page.click(By.ariaLabel("next month"));
   await page.click(By.ariaLabel("next month"));
+
+  await page.click(By.ariaLabel("Mar 19, 2019"))
 }
 
 run().catch(console.error)

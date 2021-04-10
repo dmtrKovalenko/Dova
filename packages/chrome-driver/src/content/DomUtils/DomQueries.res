@@ -1,7 +1,6 @@
 open Webapi.Dom
 open DovaApi
 open Belt.Result
-open DovaDefinitions.PromiseMonad
 
 let verifyElementsCount = nodeList => nodeList |> NodeList.length > 0
 
@@ -27,23 +26,12 @@ let findElement = (selector: By.selector) => {
 }
 
 let findElementsRetryable = selector => {
-  open! RetryAbility
-
-  let runFindElements = _ =>
-    findElement(selector)
-    |> Helpers.logAndReturn2("kek")
-    |> (
-      res =>
-        switch res {
-        | Error(NoElementsFound) => Error(NoElementsFound)->Continue
-        | res => RetryAbility.Stop(res)
-        }
-    )
-
-  Future.make(resolve => {
-    retry(runFindElements, ~onResolve=resolve, ~delay=30, ~timeout=5000, ());
-    None;
-  })
+  RetryAbility.retry(_ =>
+    switch findElement(selector) {
+    | Error(NoElementsFound) => Error(NoElementsFound)->Continue
+    | res => RetryAbility.Stop(res)
+    }
+  , ~delay=30, ~timeout=5000, ())
 }
 
 let getElementCoords = node => {
