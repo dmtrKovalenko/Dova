@@ -13,6 +13,7 @@
   "suffix": ".bs.js",
   "bs-dependencies": [
     "bs-webapi",
+    "rescript-future",
     "@dova/definitions"
   ],
   "warnings": {
