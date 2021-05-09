@@ -15,6 +15,6 @@
   },
   "dependencies": {
     "add": "^2.0.6",
-    "bs-platform": "^9.0.2"
+    "rescript": "^9.1.2"
   }
 }

@@ -4,8 +4,8 @@
   "scripts": {
     "build:content": "esbuild ./lib/es6/src/content/Content.bs.js --bundle --outfile=./extension/content.js",
     "build:background": "esbuild ./lib/es6/src/background/Background.bs.js --bundle --outfile=./extension/background.js",
-    "bs:build": "bsb -make-world",
-    "dev": "concurrently -r 'yarn build:content --watch' 'yarn build:background --watch' 'yarn bs:build -w'",
+    "re:build": "rescript build",
+    "dev": "concurrently -r 'yarn build:content --watch' 'yarn build:background --watch' 'yarn re:build -w'",
     "clean": "bsb -clean-world"
   },
   "keywords": [
