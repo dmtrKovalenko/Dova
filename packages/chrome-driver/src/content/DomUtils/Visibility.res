@@ -47,15 +47,16 @@ let rec isElementVisible = element => {
       : Invisible(Msg.noEffectiveWidthOrHeight)
   // TODO: handle fixed or sticky elements
   | el =>
-    el->elIsHiddenByAncestors->ofBool("Element is hidden because of one parent is not visible")
+    el->elIsHiddenByAncestors->ofBool("Element is hidden because of one of its parents is not visible")
   }
 }
 
-let isElementVisibleWithExplicitResult = element => {
-  switch isElementVisible(element) {
-  | Visible => Result.Ok()
-  | InvisibleByCssProp(name, value) =>
-    Result.Error("is not visible because of CSS prop `" ++ name ++ ":" ++ value ++ "`")
-  | Invisible(reason) => Result.Error(reason)
-  }
-}
+let isElementVisibleWithExplicitResult = element =>
+  element->Belt.Result.map(element =>
+    switch isElementVisible(element) {
+    | Visible => Result.Ok(element)
+    | InvisibleByCssProp(name, value) =>
+      Result.Error("It has CSS prop `" ++ name ++ ":" ++ value ++ "`")
+    | Invisible(reason) => Result.Error(reason)
+    }
+  )

@@ -20,6 +20,14 @@ module ActionAbilityContext = {
   }
 }
 
+external map: (Belt.Result.t<'a, 'c>, 'a => 'b) => Belt.Result.t<'b, 'c> = "map"
+
+let ensureElementAttached = el => el->Belt.Result.map(a => a)
+let ensureElementNotDisabled = el => el->Belt.Result.map(a => a)
+let ensureInputIsNotReadonly = el => el->Belt.Result.map(a => a)
+let ensureElementScrolledIntoView = el => el->Belt.Result.map(a => a)
+let ensureElementNotAnimating = (el, _coordsHistory) => el->Belt.Result.map(a => a)
+
 let verify = selector => {
   RetryAbility.retry(ctx => {
     open! ActionAbilityContext
@@ -32,18 +40,23 @@ let verify = selector => {
     | (None, Ok(element)) =>
       ActionAbilityContext.empty->ActionAbilityContext.recordNewCoord(element)->Continue
     // already verifying but element was unmounted in the middle
-    | (Some(Error((ctx, _reason))), Error(_)) => Error(ctx, "Element not found")->Continue
+    | (Some(Error((ctx, _))), Error(_)) => Error(ctx, "Element not found")->Continue
     // not recrorded 2 points for animation verification
-    | (Some(Error((ctx, _reason))), Ok(element)) if ctx.coordinateHistory->Js.Array.length < 2 =>
+    | (Some(Error((ctx, _))), Ok(element)) if ctx.coordinateHistory->Js.Array.length < 2 =>
       ctx->ActionAbilityContext.recordNewCoord(element)->Continue
     // ready for more precise actionability checks of particular dom element
-    | (Some(Error(ctx, _reason)), Ok(element)) =>
-      element
+    | (Some(Error(ctx, _)), Ok(element)) =>
+      Ok(element)
+      ->ensureElementAttached
+      ->ensureElementNotDisabled
+      ->ensureInputIsNotReadonly
       ->Visibility.isElementVisibleWithExplicitResult
+      ->ensureElementNotAnimating(ctx.coordinateHistory)
+      ->ensureElementScrolledIntoView
       ->(
         res =>
           switch res {
-          | Ok() => Ok(element)->Stop
+          | Ok(_) => Ok(element)->Stop
           | Error(reason) => Error(ctx, reason)->Continue
           }
       )
@@ -51,5 +64,7 @@ let verify = selector => {
     // edge case should never happen
     | (Some(Ok(el)), _) => Ok(el)->Stop
     }
-  }, ~delay=200, ~timeout=4000, ())->Future.mapError(((_, reason)) => DovaApi.UnhandledError(reason))
+  }, ~delay=200, ~timeout=4000, ())->Future.mapError(((_, reason)) => DovaApi.UnhandledError(
+    reason,
+  ))
 }
